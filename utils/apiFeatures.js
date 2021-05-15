@@ -4,7 +4,7 @@ class APIFeatures {
     this.queryString = queryString;
   }
 
-  // 1A) FILTERING
+  // 1) FILTERING
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = [`page`, `sort`, `limit`, `fields`];
@@ -50,11 +50,6 @@ class APIFeatures {
     const skip = (page - 1) * limit;
 
     this.query = this.query.skip(skip).limit(limit);
-
-    // if (this.queryString.page) {
-    //   const numTours = await Tour.countDocuments();
-    //   if (skip >= numTours) throw new Error(`The page does not exist`);
-    // }
 
     return this;
   }
