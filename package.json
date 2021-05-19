@@ -7,14 +7,15 @@
   "scripts": {
     "start": "node server.js",
     "start:dev": "nodemon server.js",
-    "start:prod": "SET NODE_ENV=production & nodemon server.js",
-    "debug": "ndb server.js",
-    "kill": "kill -9 $(lsof -i :3000) &>/dev/null | exit 0"
+    "start:prod": "set NODE_ENV=production & nodemon server.js",
+    "debug": "ndb server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cross-env": "^7.0.3",
     "dotenv": "^9.0.1",
     "express": "^4.17.1",
     "mongoose": "^5.12.8",
