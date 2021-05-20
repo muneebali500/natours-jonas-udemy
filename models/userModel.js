@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
       message: `Passwords do no match`,
     },
   },
+  passwordChangedAt: Date,
 });
 
 // pre method to hash password
@@ -53,6 +54,22 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// function to check if user changed the password after the toekn issued
+userSchema.methods.changedPssswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    // console.log(changedTimeStamp, JWTTimestamp);
+    return JWTTimestamp < changedTimeStamp;
+  }
+
+  // false means Password is NOT chnaged
+  return false;
 };
 
 const User = mongoose.model(`User`, userSchema);

@@ -91,6 +91,7 @@ export const updateTour = catchAsync(async (req, res, next) => {
 
 export const deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
+  console.log(tour);
 
   if (!tour) {
     return next(new AppError(`Tour with this ID does not exist`, 404));

@@ -1,3 +1,7 @@
+// built-in-module import
+import { promisify } from 'util';
+
+// Third party and custom modules import
 import User from '../models/userModel.js';
 import catchAsync from '../utils/catchAsync.js';
 import jwt from 'jsonwebtoken';
@@ -14,6 +18,7 @@ export const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
 
   const token = signToken(newUser._id);
@@ -47,4 +52,46 @@ export const login = catchAsync(async (req, res, next) => {
     status: `success`,
     token,
   });
+});
+
+export const protect = catchAsync(async (req, res, next) => {
+  // 1) Getting token and check if it's there
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith(`Bearer`)
+  ) {
+    token = req.headers.authorization.split(` `)[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError(`Sorry, your are not logged in. Please login first`, 401)
+    );
+  }
+
+  // 2) Verification toekn
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  // console.log(decoded);
+
+  // 3) Check if user still exists (e.g: user has been removed but token exist)
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError(
+        `The user belonging to this token does not exist. Please login`,
+        401
+      )
+    );
+  }
+
+  // 4) Check if user changed password after the token was issued
+  if (currentUser.changedPssswordAfter(decoded.iat)) {
+    return next(
+      new AppError(`User recently changed password. Please login again`, 401)
+    );
+  }
+
+  req.user = currentUser;
+  next();
 });
