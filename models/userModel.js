@@ -57,6 +57,7 @@ userSchema.pre(`save`, async function (next) {
   next();
 });
 
+// setting new password
 userSchema.pre(`save`, function (next) {
   if (!this.isModified || this.isNew) return next();
 
