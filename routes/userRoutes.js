@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   updateMe,
+  deleteMe,
 } from './../controllers/userController.js';
 
 import {
@@ -21,6 +22,7 @@ import {
 const router = express.Router();
 
 router.patch(`/updateMe`, protect, updateMe);
+router.delete(`/deleteMe`, protect, deleteMe);
 
 router.post(`/signup`, signup);
 router.post(`/login`, login);
