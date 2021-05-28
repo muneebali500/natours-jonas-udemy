@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import reviewRouter from './routes/reviewRoutes.js';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import rateLimit from 'express-rate-limit';
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Middleware to restrict requests from one IP to max 100 per hour
 const limiter = rateLimit({
-  max: 3,
+  max: 100,
   windowMilliseconds: 60 * 60 * 1000,
   message: `Too many requests from this IP. Please try again in an hour`,
 });
@@ -70,6 +71,7 @@ app.use((req, res, next) => {
 // ROUTES
 app.use(`/api/v1/tours`, tourRouter);
 app.use(`/api/v1/users`, userRouter);
+app.use(`/api/v1/reviews`, reviewRouter);
 
 // middleware to handle unrecognised/undefined routes
 app.all(`*`, (req, res, next) => {
@@ -82,5 +84,3 @@ app.all(`*`, (req, res, next) => {
 app.use(globalErrorHandler);
 
 export default app;
-
-// "kill": "kill -9 $(lsof -i :3000) &>/dev/null | exit 0"
