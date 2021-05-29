@@ -51,6 +51,7 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+// User is allowed to create one review for a single tour (disallowing multiple reviews)
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.statics.caclAverageRatings = async function (tourId) {
