@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
+import viewRouter from './routes/viewRoutes.js';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import rateLimit from 'express-rate-limit';
@@ -19,7 +20,13 @@ dotenv.config();
 
 const app = express();
 
+app.set(`view engine`, `pug`);
+app.set(`views`, path.join(__dirname, `views`));
+
 // Global middlewares
+// Middleware to access static files like images, css, js
+app.use(express.static(path.join(__dirname, `public`)));
+
 // Set security HTTP Headers
 app.use(helmet());
 
@@ -59,9 +66,6 @@ app.use(
   })
 );
 
-// Middleware to access static files like images, css, js
-app.use(express.static(`${__dirname}/public`));
-
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -69,6 +73,7 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
+app.use(`/`, viewRouter);
 app.use(`/api/v1/tours`, tourRouter);
 app.use(`/api/v1/users`, userRouter);
 app.use(`/api/v1/reviews`, reviewRouter);
